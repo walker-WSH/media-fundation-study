@@ -19,7 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mf.cpp" />
+    <ClInclude Include="mf-capture.h" />
+    <ClInclude Include="mf-enum.h" />
+    <ClInclude Include="mf-util.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mf-capture.cpp" />
+    <ClCompile Include="mf-enum.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
