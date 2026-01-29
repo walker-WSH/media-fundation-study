@@ -1,4 +1,14 @@
 ﻿#pragma once
+/*
+* doc: av capture https://learn.microsoft.com/en-us/windows/win32/medfound/audio-video-capture
+* doc: Presentation Descriptors https://learn.microsoft.com/en-us/windows/win32/medfound/presentation-descriptors
+* doc: video subtypes https://learn.microsoft.com/en-us/windows/win32/medfound/video-subtype-guids
+* doc: audio subtypes https://learn.microsoft.com/en-us/windows/win32/medfound/audio-subtype-guids
+* sample: capture raw video https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/Win7Samples/multimedia/mediafoundation/MFCaptureD3D
+* sample: capture and IMFSinkWriter https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/Win7Samples/multimedia/mediafoundation/MFCaptureToFile
+* sample: capture and IMFPMediaPlayer https://github.com/microsoft/Windows-classic-samples/tree/main/Samples/Win7Samples/multimedia/mediafoundation/SimpleCapture
+*/
+
 // for mf
 #include <initguid.h>
 #include <mfapi.h>
