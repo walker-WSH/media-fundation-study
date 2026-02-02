@@ -72,7 +72,7 @@ bool CMFCapture::StartCapture()
 		return false;
 	}
 
-	// Ask for the first sample.
+	// Ask for the first sample. 如果设备被占用，此处并不会出错，而是CMFCapture::OnReadSample 第一次回调时传入HRESULT错误码
 	hr = m_pReader->ReadSample(m_dwReaderStream, 0, NULL, NULL, NULL, NULL);
 	if (FAILED(hr)) {
 		// NOTE: The source reader shuts down the media source
