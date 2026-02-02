@@ -1,4 +1,4 @@
-﻿#include "mf-enum.h"
+#include "mf-enum.h"
 
 std::vector<MFDevice> EnumDevices(bool video)
 {
@@ -33,7 +33,7 @@ std::vector<MFDevice> EnumDevices(bool video)
 				// for dshow device path
 				hr = ppDevices[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_AUDCAP_SYMBOLIC_LINK, &szSymbolicLink, &chSymbolicLink);
 				// for win-wasapi
-				hr = ppDevices[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_AUDCAP_ENDPOINT_ID, &szAudioEndpoint, &chSymbolicLink);
+				ppDevices[i]->GetAllocatedString(MF_DEVSOURCE_ATTRIBUTE_SOURCE_TYPE_AUDCAP_ENDPOINT_ID, &szAudioEndpoint, &chSymbolicLink);
 			}
 
 			if (SUCCEEDED(hr)) {
@@ -45,7 +45,7 @@ std::vector<MFDevice> EnumDevices(bool video)
 				if (video) {
 					wprintf(L"Video Device [%u/%u]\n%s \nSymbolicLink: %s\n\n", i + 1, count, szFriendlyName, szSymbolicLink);
 				} else {
-					wprintf(L"Audio Device [%u/%u]\n%s \nSymbolicLink: %s\nendpoint: %ls  \n\n", i + 1, count, szFriendlyName, szSymbolicLink, szAudioEndpoint);
+					wprintf(L"Audio Device [%u/%u]\n%s \nSymbolicLink: %s\nendpoint: %ls  \n\n", i + 1, count, szFriendlyName, szSymbolicLink, szAudioEndpoint ? szAudioEndpoint : L"");
 				}
 			}
 		}
@@ -164,9 +164,9 @@ HRESULT EnumCapability(ComPtr<IMFMediaSource> pSource, bool video)
 				// 视频设备的每个 IMFMediaType 支持的 framerate（帧率）通常是一个固定值 MF_MT_FRAME_RATE，但有些设备/驱动会用“帧率范围”来描述其能力:MF_MT_FRAME_RATE_RANGE_MIN, MF_MT_FRAME_RATE_RANGE_MAX
 				// 如果 MF_MT_FRAME_RATE_RANGE_MIN 和 MF_MT_FRAME_RATE_RANGE_MAX 存在，说明该格式支持一个帧率区间。
 				// 如果是帧率范围 可以设置这个mediatype使用某个固定framerate：pType->SetItem(MF_MT_FRAME_RATE, var), 参考 https://learn.microsoft.com/en-us/windows/win32/medfound/how-to-set-the-video-capture-frame-rate
-				UINT32 num1 = 0, num2 = 0;
-				MFGetAttributeRatio(pType.Get(), MF_MT_FRAME_RATE_RANGE_MAX, &num1, &num2);
-				MFGetAttributeRatio(pType.Get(), MF_MT_FRAME_RATE_RANGE_MIN, &num1, &num2);
+				UINT32 rangeMaxNum = 0, rangeMaxDen = 0, rangeMinNum = 0, rangeMinDen = 0;
+				MFGetAttributeRatio(pType.Get(), MF_MT_FRAME_RATE_RANGE_MAX, &rangeMaxNum, &rangeMaxDen);
+				MFGetAttributeRatio(pType.Get(), MF_MT_FRAME_RATE_RANGE_MIN, &rangeMinNum, &rangeMinDen);
 
 				// log
 				printf("\tcapability stream[%lu/%lu] mediaType[%lu/%lu] >> %lux%lu, Format=%s  fps:%lu/%lu （%.2ffps） \n", i + 1, streamCount, j + 1, typeCount, width, height,

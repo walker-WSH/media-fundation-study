@@ -1,4 +1,4 @@
-﻿#include "mf-capture.h"
+#include "mf-capture.h"
 #include "mf-util.hpp"
 #include <cmath>
 #include <cstdio>
@@ -87,8 +87,13 @@ void CMFCapture::StopCapture()
 {
 	CAutoLockCS lock(m_lock);
 
-	m_pSource = nullptr;
-	m_pReader = nullptr;
+	if (m_pReader)
+		m_pReader = nullptr;
+
+	if (m_pSource) {
+		m_pSource->Shutdown();
+		m_pSource = nullptr;
+	}
 }
 
 ULONG CMFCapture::AddRef()
@@ -206,10 +211,11 @@ bool CMFCapture::TestAudioMediaType(ComPtr<IMFMediaType> pNativeType)
 			auto hr = m_pReader->SetCurrentMediaType(m_dwReaderStream, nullptr, pNativeType.Get());
 			assert(SUCCEEDED(hr));
 			if (SUCCEEDED(hr)) {
-				pNativeType->GetUINT32(MF_MT_AUDIO_NUM_CHANNELS, &m_dwChannels);
-				pNativeType->GetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, &m_dwSampleRate);
-				pNativeType->GetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, &m_dwBitsPerSample);
-				assert(m_dwChannels > 0 && m_dwSampleRate > 0 && m_dwBitsPerSample > 0);
+				if (FAILED(pNativeType->GetUINT32(MF_MT_AUDIO_NUM_CHANNELS, &m_dwChannels)) || FAILED(pNativeType->GetUINT32(MF_MT_AUDIO_SAMPLES_PER_SECOND, &m_dwSampleRate)) ||
+				    FAILED(pNativeType->GetUINT32(MF_MT_AUDIO_BITS_PER_SAMPLE, &m_dwBitsPerSample)) || m_dwChannels == 0 || m_dwSampleRate == 0 || m_dwBitsPerSample == 0) {
+					return false;
+				}
+
 				return true;
 			}
 		}
