@@ -13,7 +13,10 @@ ComPtr<CMFCapture> CMFCapture::CreateInstance(bool video, const WCHAR *name, con
 		return nullptr;
 
 	CMFCapture *ins = new (std::nothrow) CMFCapture(source, video);
-	auto obj = ComPtr<CMFCapture>(ins);
+	if (!ins)
+		return nullptr;
+
+	auto obj = ComPtr<CMFCapture>(ins); // make AddRef called
 	obj->Release();
 	return obj;
 }

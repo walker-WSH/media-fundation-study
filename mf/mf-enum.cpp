@@ -45,7 +45,8 @@ std::vector<MFDevice> EnumDevices(bool video)
 				if (video) {
 					wprintf(L"Video Device [%u/%u]\n%s \nSymbolicLink: %s\n\n", i + 1, count, szFriendlyName, szSymbolicLink);
 				} else {
-					wprintf(L"Audio Device [%u/%u]\n%s \nSymbolicLink: %s\nendpoint: %ls  \n\n", i + 1, count, szFriendlyName, szSymbolicLink, szAudioEndpoint ? szAudioEndpoint : L"");
+					wprintf(L"Audio Device [%u/%u]\n%s \nSymbolicLink: %s\nendpoint: %ls  \n\n", i + 1, count, szFriendlyName, szSymbolicLink,
+						szAudioEndpoint ? szAudioEndpoint : L"");
 				}
 			}
 		}
@@ -54,16 +55,6 @@ std::vector<MFDevice> EnumDevices(bool video)
 		hr = ppDevices[i]->ActivateObject(__uuidof(IMFMediaSource), (void **)&pSource);
 		if (SUCCEEDED(hr)) {
 			EnumCapability(pSource, video);
-
-			// test capture
-			bool logitech = szFriendlyName && wcsstr(szFriendlyName, L"Logitech");
-			if (logitech) {
-				if (video) {
-					//CaptureVideo(pSource); // 如果先调用了这个函数 则同一个IMFMediaSource 调用CreatePresentationDescriptor会失败
-				} else {
-					//CaptureAudio(pSource);
-				}
-			}
 		}
 
 		printf("\n\n");
